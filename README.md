@@ -50,7 +50,7 @@ another OS is just swapping the `whisper-server` binary.
 2. **Record** (renderer) — `getUserMedia` + `AudioContext({sampleRate:16000})` + `ScriptProcessorNode` collect Float32 PCM; a timer shows elapsed seconds.
 3. **Stop + encode** (renderer) — press again → concat samples → `encodeWav()` → 16-bit WAV `ArrayBuffer`.
 4. **IPC** — `bridge.transcribe(wav)` sends the bytes to main.
-5. **Transcribe** (main) — POST the WAV to `http://127.0.0.1:8910/inference`; whisper-server runs Whisper Medium on the GPU and returns text.
+5. **Transcribe** (main) — POST the WAV to `http://127.0.0.1:8910/inference` (with `translate=false`, `language=auto`); whisper-server runs Whisper on the GPU and returns text in the spoken language.
 6. **Cleanup** (main) — `cleanupTranscript()` strips filler words, collapses stutters, normalizes whitespace.
 7. **Inject** (main) — `pasteIntoActiveApp()`: save clipboard → write text → send paste keystroke → restore clipboard.
 8. **Echo** — returns `{text, ms, note}`; renderer shows the result and latency.
