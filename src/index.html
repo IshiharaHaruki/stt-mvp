@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';" />
+<title>STT MVP — native whisper.cpp</title>
+<style>
+  body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; padding: 20px; }
+  h1 { font-size: 16px; margin: 0 0 4px; }
+  .hint { color: #888; font-size: 12px; margin-bottom: 14px; }
+  #status { padding: 10px 12px; border-radius: 8px; background: #8881; margin-bottom: 12px; }
+  #transcript { border: 1px solid #8883; border-radius: 8px; padding: 12px; min-height: 90px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>STT MVP — Whisper Medium (native, GPU)</h1>
+  <div class="hint">Press <b>⌘/Ctrl + Shift + Space</b> to start, press again to stop → transcribe → paste into the focused app.</div>
+  <div id="status">starting…</div>
+  <div id="transcript"></div>
+  <script src="./renderer.js"></script>
+</body>
+</html>
