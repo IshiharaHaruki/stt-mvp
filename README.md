@@ -5,10 +5,12 @@ press a hotkey, talk, and your words are transcribed and pasted into whatever ap
 is focused. Runs **Whisper on-device via native `whisper.cpp` with GPU**, so it's
 both accurate and fast. Nothing is sent to the cloud.
 
-Default model is **`small.en`** (181MB, ~0.3s for a 10s clip) — a good
-accuracy/size balance for English fleet deployment. Swap `WHISPER_MODEL` for
-`medium` if you need higher accuracy on hard audio (accents, jargon, noise);
-medium is still fast (~0.8s) since the model stays warm.
+Default model is **`small`** (multilingual, 181MB, ~0.3s for a 10s clip) — a good
+accuracy/size balance. Language is **auto-detected** and the app transcribes
+(not translates), so mixed **Chinese + English** dictation works: Chinese stays
+Chinese, English stays English. Swap `WHISPER_MODEL` for `medium` if you need
+higher accuracy on hard audio (accents, jargon, noise); medium is still fast
+(~0.8s) since the model stays warm.
 
 ---
 
@@ -65,13 +67,12 @@ another OS is just swapping the `whisper-server` binary.
 
 - Node 18+ (tested on 24)
 - **whisper.cpp** providing a `whisper-server` binary (see platform setup below)
-- **A ggml model** (default `small.en`, quantized — English only):
+- **A ggml model** (default `small`, multilingual, quantized — handles zh + en):
   ```bash
   mkdir -p models
-  curl -L -o models/ggml-small.en-q5_1.bin \
-    https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en-q5_1.bin
+  curl -L -o models/ggml-small-q5_1.bin \
+    https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
   # optional, higher accuracy: ggml-medium-q5_0.bin (multilingual, 514MB)
-  # for non-English use a multilingual model (e.g. ggml-small-q5_1.bin)
   ```
 
 ### macOS
@@ -102,14 +103,14 @@ transcribes and pastes into the focused app.
 npm run test:stt   # transcribes bundled jfk.wav via the managed server, prints warm latency
 ```
 
-Verified locally on Apple M4 / Metal: `small.en` **warm ~275ms**, `medium` warm ~780ms.
+Verified locally on Apple M4 / Metal: `small` (multilingual) **warm ~280ms**, `medium` warm ~780ms.
 
 ## Configuration (env vars)
 
 | Var | Default | Purpose |
 |---|---|---|
 | `WHISPER_SERVER_BIN` | `whisper-server` (PATH) | path to the whisper.cpp server binary |
-| `WHISPER_MODEL` | `models/ggml-small.en-q5_1.bin` | ggml model file (swap for medium / multilingual) |
+| `WHISPER_MODEL` | `models/ggml-small-q5_1.bin` | ggml model file (swap for medium / multilingual) |
 | `WHISPER_PORT` | `8910` | local server port |
 
 ---
@@ -173,7 +174,7 @@ its DLLs, and the model `.bin`. At runtime, set `WHISPER_SERVER_BIN` /
 
 | Part | State |
 |---|---|
-| Native whisper.cpp via managed server (small.en default) | ✅ verified (warm ~0.3s, macOS/Metal) |
+| Native whisper.cpp via managed server (multilingual small default) | ✅ verified (warm ~0.3s, macOS/Metal) |
 | Deterministic cleanup (filler / stutter / spaces) | ✅ |
 | Clipboard + auto-paste (macOS osascript / Windows SendKeys) | ✅ |
 | Toggle global hotkey | ✅ |

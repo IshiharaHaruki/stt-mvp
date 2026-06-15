@@ -19,7 +19,7 @@ const PORT = Number(process.env.WHISPER_PORT ?? 8910);
 // Windows: bundle a Vulkan prebuilt and set WHISPER_SERVER_BIN.
 const WHISPER_BIN = process.env.WHISPER_SERVER_BIN ?? "whisper-server";
 const MODEL_PATH =
-  process.env.WHISPER_MODEL ?? join(__dirname, "..", "models", "ggml-small.en-q5_1.bin");
+  process.env.WHISPER_MODEL ?? join(__dirname, "..", "models", "ggml-small-q5_1.bin");
 
 let win: BrowserWindow | null = null;
 let server: ChildProcess | null = null;
@@ -62,6 +62,10 @@ async function transcribe(wav: ArrayBuffer): Promise<string> {
   const fd = new FormData();
   fd.append("file", new Blob([wav], { type: "audio/wav" }), "audio.wav");
   fd.append("response_format", "text");
+  // Transcribe (NOT translate) and auto-detect language, so Chinese stays Chinese
+  // and English stays English in mixed zh/en dictation.
+  fd.append("translate", "false");
+  fd.append("language", "auto");
   const res = await fetch(`http://127.0.0.1:${PORT}/inference`, { method: "POST", body: fd });
   const raw = (await res.text()).trim();
   return cleanupTranscript(raw, "en");
