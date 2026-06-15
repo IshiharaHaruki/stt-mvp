@@ -136,10 +136,11 @@ won't resolve. Get a prebuilt whisper.cpp release and point the app at it.
 | `whisper-bin-Win32.zip` | none (CPU) | 32-bit | fallback |
 
 > ⚠️ There is **no official Vulkan build** for Windows. So GPU acceleration on
-> **AMD / Intel** GPUs is not available from the official downloads — you'd either
-> run CPU (small model is fine on CPU; medium is slower), build whisper.cpp from
-> source with `-DGGML_VULKAN=1`, or use a community Vulkan prebuilt (unofficial —
-> vet it yourself). On **NVIDIA**, use the CUDA (`cublas`) build.
+> **AMD / Intel** GPUs is not available from the official downloads. Options:
+> run CPU (small model is fine on CPU; medium is slower), or **build the Vulkan
+> version yourself** (cross-vendor, accelerates Intel/AMD/NVIDIA) — see
+> **[docs/windows-vulkan-build.md](docs/windows-vulkan-build.md)**. On **NVIDIA**,
+> the official CUDA (`cublas`) build is the easiest GPU path.
 
 Steps:
 
