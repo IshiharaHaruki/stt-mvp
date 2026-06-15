@@ -33,7 +33,7 @@ higher accuracy on hard audio (accents, jargon, noise); medium is still fast
                                                       ▼
                                        ┌──────────────────────────────┐
                                        │ whisper-server (native binary) │
-                                       │ whisper.cpp + GPU (Metal/Vulkan)│
+                                       │ whisper.cpp + GPU (Metal/CUDA/CPU)│
                                        │ model stays warm in VRAM        │
                                        └──────────────────────────────┘
 ```
@@ -124,26 +124,35 @@ and **one of them is just configuration, not code**.
 ### 1. Provide a Windows `whisper-server.exe` (required)
 
 There is no Homebrew on Windows, so the default `whisper-server` (PATH lookup)
-won't resolve. Get a prebuilt whisper.cpp release and point the app at it:
+won't resolve. Get a prebuilt whisper.cpp release and point the app at it.
 
-1. Download a Windows build from whisper.cpp releases — prefer the **Vulkan**
-   build (works on NVIDIA / AMD / Intel GPUs). CUDA (NVIDIA-only) or CPU/BLAS
-   builds also work.
-   - <https://github.com/ggml-org/whisper.cpp/releases>
-2. Unzip it somewhere, e.g. `C:\tools\whisper\`. Keep **all the DLLs**
-   (`ggml*.dll`, `whisper.dll`, etc.) **next to `whisper-server.exe`** — the app
-   spawns the server with its own directory as the working dir so Windows finds them.
-3. Point the env vars at the binary and model (PowerShell):
+**Official prebuilts** — <https://github.com/ggml-org/whisper.cpp/releases>
+(verified: the zips contain `whisper-server.exe` + `ggml*.dll` / `whisper.dll`):
+
+| Build | GPU | Arch | Use when |
+|---|---|---|---|
+| `whisper-cublas-12.4.0-bin-x64.zip` | CUDA | x64 | **NVIDIA GPU** — fastest |
+| `whisper-blas-bin-Win32.zip` | none (CPU+BLAS) | 32-bit | AMD / Intel / no GPU |
+| `whisper-bin-Win32.zip` | none (CPU) | 32-bit | fallback |
+
+> ⚠️ There is **no official Vulkan build** for Windows. So GPU acceleration on
+> **AMD / Intel** GPUs is not available from the official downloads — you'd either
+> run CPU (small model is fine on CPU; medium is slower), build whisper.cpp from
+> source with `-DGGML_VULKAN=1`, or use a community Vulkan prebuilt (unofficial —
+> vet it yourself). On **NVIDIA**, use the CUDA (`cublas`) build.
+
+Steps:
+
+1. Download the build that matches your GPU, unzip to e.g. `C:\tools\whisper\`.
+   Keep **all the DLLs next to `whisper-server.exe`** — the app spawns the server
+   with its own directory as the working dir so Windows resolves them.
+2. Point the env vars at the binary and model (PowerShell):
    ```powershell
    $env:WHISPER_SERVER_BIN = "C:\tools\whisper\whisper-server.exe"
-   $env:WHISPER_MODEL      = "C:\path\to\models\ggml-medium-q5_0.bin"
+   $env:WHISPER_MODEL      = "C:\path\to\models\ggml-small-q5_1.bin"
    npm start
    ```
-   (The model file is the same `.bin` — ggml format is OS-independent.)
-
-> GPU requirements: the **Vulkan** build needs a recent GPU driver (Vulkan runtime
-> ships with it). The **CUDA** build needs an NVIDIA GPU + CUDA runtime. If a GPU
-> build won't load, the **CPU/BLAS** build always runs (slower).
+   (The model `.bin` is the same as on macOS — ggml format is OS-independent.)
 
 ### 2. Paste keystroke — already handled, with one caveat
 
@@ -179,7 +188,7 @@ its DLLs, and the model `.bin`. At runtime, set `WHISPER_SERVER_BIN` /
 | Clipboard + auto-paste (macOS osascript / Windows SendKeys) | ✅ |
 | Toggle global hotkey | ✅ |
 | Mic capture → WAV → IPC | ✅ wired (interactive test with a real mic) |
-| Windows run | ⚙️ set `WHISPER_SERVER_BIN` to a Vulkan build (see above) |
+| Windows run | ⚙️ set `WHISPER_SERVER_BIN` to a prebuilt (NVIDIA: cublas x64; else CPU Win32) — see above |
 
 ## Next steps (not yet wired)
 
