@@ -12,9 +12,16 @@ with the app.
 
 ## Prerequisites (on the build machine)
 
-1. **Visual Studio 2022** (Community is fine) with the
+1. **Visual Studio 2022 or 2019** (Community is fine) with the
    **"Desktop development with C++"** workload — this provides MSVC + CMake.
+   whisper.cpp only needs **C++17**, which both support.
    - Download: <https://visualstudio.microsoft.com/downloads/>
+   - ⚠️ The Vulkan backend requires **CMake ≥ 3.19**. VS's bundled CMake is usually
+     fine; if you hit a CMake-version error, install the latest from <https://cmake.org/download/>.
+   - On VS 2019, name the generator explicitly:
+     `cmake -B build -G "Visual Studio 16 2019" -A x64 -DGGML_VULKAN=1`
+     (VS 2022 uses `"Visual Studio 17 2022"`, or just omit `-G` when running from
+     the matching "x64 Native Tools Command Prompt".)
 2. **Vulkan SDK** (LunarG) — provides headers, libs, and `glslc` (the shader
    compiler the Vulkan backend needs **at build time**). The installer sets the
    `VULKAN_SDK` environment variable.
