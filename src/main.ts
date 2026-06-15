@@ -19,7 +19,7 @@ const PORT = Number(process.env.WHISPER_PORT ?? 8910);
 // Windows: bundle a Vulkan prebuilt and set WHISPER_SERVER_BIN.
 const WHISPER_BIN = process.env.WHISPER_SERVER_BIN ?? "whisper-server";
 const MODEL_PATH =
-  process.env.WHISPER_MODEL ?? join(__dirname, "..", "models", "ggml-medium-q5_0.bin");
+  process.env.WHISPER_MODEL ?? join(__dirname, "..", "models", "ggml-small.en-q5_1.bin");
 
 let win: BrowserWindow | null = null;
 let server: ChildProcess | null = null;
